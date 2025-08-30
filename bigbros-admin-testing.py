@@ -6,7 +6,6 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.ui import WebDriverWait
 import time
-from selenium.common.exceptions import TimeoutException
 
 options = Options()
 options.add_experimental_option('detach', True)
@@ -36,7 +35,7 @@ print(' ✔ Login success')
 user = wait.until(EC.element_to_be_clickable((By.LINK_TEXT, 'Users')))
 user.click()
 print(' ✔ Navigating to Users page')
-time.sleep(3)
+time.sleep(2)
 assert user.is_displayed(), "❌ Users page did not load"
 
 adminTab = wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="radix-_r_0_-trigger-admins"]')))
@@ -47,7 +46,7 @@ addAdmin = wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="radix-_r_0
 addAdmin.click()
 
 adminEmail = wait.until(EC.element_to_be_clickable((By.XPATH,'//*[@id="admin-email"]')))
-adminEmail.send_keys('testing1a2@gmail.com')
+adminEmail.send_keys('testing1BaA2@gmail.com')
 adminUsername = wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="admin-username"]')))
 adminUsername.send_keys('testing12345')
 adminPassword = wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="admin-password"]')))
@@ -75,31 +74,31 @@ allStatusButton.click()
 select = Select(allStatusButton)
 
 select.select_by_value('all')
-print(" ☆ Selected: All Status")
+print(" --- ☆ Selected: All Status")
 time.sleep(1)
 
 select.select_by_value("pending")
-print(" ☆ Selected: Pending")
+print(" --- ☆ Selected: Pending")
 time.sleep(1)
 
 select.select_by_value("rescheduled")
-print(" ☆ Selected: Rescheduled")
+print(" --- ☆ Selected: Rescheduled")
 time.sleep(1)
 
 select.select_by_value("confirmed")
-print(" ☆ Selected: Confirmed")
+print(" --- ☆ Selected: Confirmed")
 time.sleep(1)
 
 select.select_by_value("cancelled")
-print(" ☆ Selected: Cancelled")
+print(" --- ☆ Selected: Cancelled")
 time.sleep(1)
 
 select.select_by_value("completed")
-print(" ☆ Selected: Completed")
+print(" --- ☆ Selected: Completed")
 time.sleep(1)
 
 select.select_by_value('all')
-print(" ☆ Selected: All Status")
+print(" --- ☆ Selected: All Status")
 time.sleep(1)
 
 
@@ -122,12 +121,12 @@ confirmBooking.click()
 print("✔ Confirm Booking clicked")
 time.sleep(3)
 
-try:
-    resolveBookingConflict = wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="radix-_r_f_"]/div[3]/button')))
-    resolveBookingConflict.click()
+conflict_buttons = driver.find_elements(By.XPATH, '//*[@id="radix-_r_f_"]/div[3]/button')
+if conflict_buttons:
+    conflict_buttons[0].click()
     print("✔ Resolve Booking Conflict clicked")
     time.sleep(2)
-except TimeoutException:
+else:
     print("ℹ No conflict dialog appeared, continuing...")
 
 # -------------------------History Bookings---------------------------------------------
@@ -145,22 +144,23 @@ time.sleep(4)
 dialog = wait.until(EC.visibility_of_element_located(
     (By.CSS_SELECTOR, "div[data-state='open']"))
 )
-#
-#
-# closeButton = wait.until(EC.element_to_be_clickable((
-#     By.CSS_SELECTOR, "div[data-state='open'] button:has(svg.lucide-x)"
-# )))
-#
-# try:
-#     closeButton.click()
-#     print('✔ History dialog closed')
-# except:
-#     driver.execute_script(driver.execute_script("arguments[0].click();", closeButton))
-#     print('✔ History dialog closed')
-#
-# wait.until(EC.invisibility_of_element_located(
-#     (By.CSS_SELECTOR, "div[data-state='open']"))
-# )
+
+
+closeButton = wait.until(EC.element_to_be_clickable((
+    By.CSS_SELECTOR, "div[data-state='open'] button:has(svg.lucide-x)"
+)))
+
+try:
+    closeButton.click()
+    print('✔ History dialog closed')
+except:
+    driver.execute_script(driver.execute_script("arguments[0].click();", closeButton))
+    print('✔ History dialog closed')
+
+wait.until(EC.invisibility_of_element_located(
+    (By.CSS_SELECTOR, "div[data-state='open']"))
+)
+time.sleep(2)
 
 # ------------------------------Program Page--------------------------
 # -----------------------------------------------------------------------------------------
@@ -169,6 +169,16 @@ programs.click()
 print(' ✔ Navigating to Programs page')
 time.sleep(3)
 
+dietSection = wait.until(EC.presence_of_element_located(
+    (By.XPATH, "//button[contains(normalize-space(.), 'Diet')]")))
+driver.execute_script("arguments[0].scrollIntoView(true);", dietSection)
+wait.until(EC.element_to_be_clickable(dietSection)).click()
+print(" --- ☆ Selected diet section")
+time.sleep(2)
+
+
+
+
 # ------------------------------Resources Page-------------------------
 # -----------------------------------------------------------------------------------------
 resources = wait.until(EC.element_to_be_clickable((By.LINK_TEXT, 'Resources')))
@@ -176,24 +186,60 @@ resources.click()
 print(' ✔ Navigating to Resources page')
 time.sleep(3)
 
+# Click Testimonials button
+testimonialsButton = wait.until(EC.element_to_be_clickable(
+    (By.XPATH, "//button[.//span[text()='Testimonials']] | //button[contains(., 'Testimonials')]")))
+testimonialsButton.click()
+print("✔ Testimonials button clicked")
+time.sleep(2)
+
+# Click Others button
+othersButton = wait.until(EC.element_to_be_clickable(
+    (By.XPATH, "//button[.//span[text()='Others']] | //button[contains(., 'Others')]")))
+othersButton.click()
+print("✔ Others button clicked")
+time.sleep(2)
+
+
 # ------------------------------Chat Support Page-------------------------
 # -----------------------------------------------------------------------------------------
 chatSupport = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "a[href='/chat']")))
 chatSupport.click()
 print(' ✔ Navigating to Chat Support page')
-time.sleep(3)
+time.sleep(2)
+
+# click the latest user who chat
+targetFirstMessage = wait.until(EC.element_to_be_clickable(
+    (By.CSS_SELECTOR, "div.cursor-pointer.p-3")))
+targetFirstMessage.click()
+
+time.sleep(1)
+
+# TEST MESSAGE
+chatInput = wait.until(EC.presence_of_element_located(
+    (By.CSS_SELECTOR, "input[placeholder='Type your message...']")))
+chatInput.send_keys("test message ra ta ra ta ra ta ra ta ra ta ra ta ra ta")
+print("✔ Message typed into chat")
+time.sleep(1)
+
+# send button
+sendButton = wait.until(EC.element_to_be_clickable(
+    (By.CSS_SELECTOR, "button[data-slot='button'][type='submit']")))
+sendButton.click()
+print("✔ Message sent")
+time.sleep(2)
 
 # ------------------------------Settings Page--------------------------
 # -----------------------------------------------------------------------------------------
 settings = wait.until(EC.element_to_be_clickable((By.LINK_TEXT, 'Settings')))
 settings.click()
 print(' ✔ Navigating to Settings page')
-time.sleep(3)
+time.sleep(2)
 
 dashboard = wait.until(EC.element_to_be_clickable((By.LINK_TEXT, 'Dashboard')))
 dashboard.click()
 print(' ✔ Navigating to Dashboard page')
-time.sleep(3)
+time.sleep(2)
 
 
 print("────── ★⋆☆⋆★ ──── ✨ SUMAKSIS! ✨──── ★⋆☆⋆★ ──────")
