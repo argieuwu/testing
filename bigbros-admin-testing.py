@@ -10,7 +10,7 @@ import time
 options = Options()
 options.add_experimental_option('detach', True)
 driver = webdriver.Chrome(options = options)
-driver.get('https://admin--mobile-app.vercel.app/login')
+driver.get('')
 
 wait = WebDriverWait(driver, 10)
 

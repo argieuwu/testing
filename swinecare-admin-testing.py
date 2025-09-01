@@ -9,7 +9,7 @@ options = Options()
 options.add_experimental_option('detach', True)
 
 driver = webdriver.Chrome(options=options)
-driver.get('https://admin-swine-care-seven.vercel.app')
+driver.get('')
 
 wait = WebDriverWait(driver, 10)
 
